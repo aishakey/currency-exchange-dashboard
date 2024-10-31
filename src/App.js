@@ -1,12 +1,27 @@
-import logo from "./logo.svg";
-import "./App.css";
+import React, { useState } from "react";
+import CurrencySelector from "./components/CurrencySelector";
 
 function App() {
+  const [baseCurrency, setBaseCurrency] = useState("");
+  const [targetCurrency, setTargetCurrency] = useState("");
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-100">
-      <h1 className="text-3xl font-bold text-gray-800">
-        Currency Exchange Dashboard
-      </h1>
+    <div>
+      <h1>Currency Exchange Dashboard</h1>
+      <div>
+        <h2>Select Base Currency</h2>
+        <CurrencySelector
+          selectedCurrency={baseCurrency}
+          onCurrencyChange={(currency) => setBaseCurrency(currency)}
+        />
+      </div>
+      <div>
+        <h2>Select Target Currency</h2>
+        <CurrencySelector
+          selectedCurrency={targetCurrency}
+          onCurrencyChange={(currency) => setTargetCurrency(currency)}
+        />
+      </div>
     </div>
   );
 }
