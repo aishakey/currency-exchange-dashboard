@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import CurrencySelector from "./components/CurrencySelector";
+import ExchangeRateDisplay from "./components/ExchangeRateDisplay";
+import ChartPlaceholder from "./components/ChartPlaceholder";
 
 function App() {
   const [baseCurrency, setBaseCurrency] = useState("");
@@ -22,6 +24,11 @@ function App() {
           onCurrencyChange={(currency) => setTargetCurrency(currency)}
         />
       </div>
+      <ExchangeRateDisplay
+        baseCurrency={baseCurrency}
+        targetCurrency={targetCurrency}
+      />
+      <ChartPlaceholder />
     </div>
   );
 }
