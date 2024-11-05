@@ -23,4 +23,7 @@ model ExchangeRate {
   baseCurrencyId  Int
   targetCurrency  Currency  @relation("TargetCurrency", fields: [targetCurrencyId], references: [id])
   targetCurrencyId Int
+
+  @@unique([baseCurrencyId, targetCurrencyId])
 }
+

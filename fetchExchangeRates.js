@@ -20,8 +20,21 @@ async function fetchExchangeRates() {
 
     const currencies = Object.keys(conversion_rates).map((code) => ({
       currency_code: code,
-      currency_name: code,
+      currency_name: code, //Placeholder
     }));
+
+    await Promise.all(
+      currencies.map(async (currency) => {
+        await prisma.currency.upsert({
+          where: { currency_code: currency.currency_code },
+          update: {},
+          create: {
+            currency_code: currency.currency_code,
+            currency_name: currency.currency_name,
+          },
+        });
+      })
+    );
 
     const exchangeRates = Object.entries(conversion_rates).map(
       ([code, rate]) => ({
@@ -31,10 +44,38 @@ async function fetchExchangeRates() {
       })
     );
 
-    console.log("Currencies:", currencies);
-    console.log("Exchange Rates:", exchangeRates);
+    await Promise.all(
+      exchangeRates.map(
+        async ({ baseCurrencyCode, targetCurrencyCode, rate }) => {
+          const baseCurrency = await prisma.currency.findUnique({
+            where: { currency_code: baseCurrencyCode },
+          });
+          const targetCurrency = await prisma.currency.findUnique({
+            where: { currency_code: targetCurrencyCode },
+          });
+
+          await prisma.exchangeRate.upsert({
+            where: {
+              baseCurrencyId_targetCurrencyId: {
+                baseCurrencyId: baseCurrency.id,
+                targetCurrencyId: targetCurrency.id,
+              },
+            },
+            update: { rate: rate, rate_date: new Date() },
+            create: {
+              rate: rate,
+              rate_date: new Date(),
+              baseCurrencyId: baseCurrency.id,
+              targetCurrencyId: targetCurrency.id,
+            },
+          });
+        }
+      )
+    );
+
+    console.log("Database updated with latest exchange rates.");
   } catch (error) {
-    console.error("Error fetching exchange rates:", error.message);
+    console.error("Error updating the database:", error.message);
   } finally {
     await prisma.$disconnect();
   }
