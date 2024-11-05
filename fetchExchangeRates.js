@@ -16,8 +16,23 @@ async function fetchExchangeRates() {
     if (data.result !== "success") {
       throw new Error("Failed to fetch exchange rates");
     }
+    const { conversion_rates } = data;
 
-    console.log("Exchange rates fetched successfully:", data.conversion_rates);
+    const currencies = Object.keys(conversion_rates).map((code) => ({
+      currency_code: code,
+      currency_name: code,
+    }));
+
+    const exchangeRates = Object.entries(conversion_rates).map(
+      ([code, rate]) => ({
+        baseCurrencyCode: BASE_CURRENCY,
+        targetCurrencyCode: code,
+        rate: rate,
+      })
+    );
+
+    console.log("Currencies:", currencies);
+    console.log("Exchange Rates:", exchangeRates);
   } catch (error) {
     console.error("Error fetching exchange rates:", error.message);
   } finally {
