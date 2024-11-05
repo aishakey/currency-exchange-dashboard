@@ -15,14 +15,16 @@ function ExchangeRateDisplay({ baseCurrency, targetCurrency }) {
   }, [baseCurrency, targetCurrency]);
 
   return (
-    <div>
-      <h2>Exchange Rate</h2>
+    <div className="bg-white shadow-lg rounded-lg p-4 text-center">
+      <h2 className="text-2xl font-semibold text-gray-800">Exchange Rate</h2>
       {exchangeRate ? (
-        <p>
+        <p className="text-xl text-gray-600 mt-2">
           1 {baseCurrency} = {exchangeRate} {targetCurrency}
         </p>
       ) : (
-        <p>Select currencies to see the exchange rate</p>
+        <p className="text-gray-500">
+          Select currencies to see the exchange rate
+        </p>
       )}
     </div>
   );

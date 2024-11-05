@@ -14,6 +14,7 @@ function CurrencySelector({ selectedCurrency, onCurrencyChange }) {
 
   return (
     <select
+      className="w-full p-2 border border-gray-300 rounded-lg text-gray-700 bg-white"
       value={selectedCurrency}
       onChange={(e) => onCurrencyChange(e.target.value)}
     >

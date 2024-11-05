@@ -7,28 +7,48 @@ function App() {
   const [baseCurrency, setBaseCurrency] = useState("");
   const [targetCurrency, setTargetCurrency] = useState("");
 
+  // src/App.js
   return (
-    <div>
-      <h1>Currency Exchange Dashboard</h1>
-      <div>
-        <h2>Select Base Currency</h2>
-        <CurrencySelector
-          selectedCurrency={baseCurrency}
-          onCurrencyChange={(currency) => setBaseCurrency(currency)}
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      <h1 className="text-4xl font-bold text-gray-800 mb-6">
+        Currency Exchange Dashboard
+      </h1>
+      <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0 items-start max-w-4xl w-full">
+        {/* Base Currency Selector */}
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold text-gray-700">
+            Select Base Currency
+          </h2>
+          <CurrencySelector
+            selectedCurrency={baseCurrency}
+            onCurrencyChange={setBaseCurrency}
+          />
+        </div>
+
+        {/* Target Currency Selector */}
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold text-gray-700">
+            Select Target Currency
+          </h2>
+          <CurrencySelector
+            selectedCurrency={targetCurrency}
+            onCurrencyChange={setTargetCurrency}
+          />
+        </div>
+      </div>
+
+      {/* Exchange Rate Display */}
+      <div className="my-6 w-full max-w-md">
+        <ExchangeRateDisplay
+          baseCurrency={baseCurrency}
+          targetCurrency={targetCurrency}
         />
       </div>
-      <div>
-        <h2>Select Target Currency</h2>
-        <CurrencySelector
-          selectedCurrency={targetCurrency}
-          onCurrencyChange={(currency) => setTargetCurrency(currency)}
-        />
+
+      {/* Chart Placeholder */}
+      <div className="w-full max-w-2xl">
+        <ChartPlaceholder />
       </div>
-      <ExchangeRateDisplay
-        baseCurrency={baseCurrency}
-        targetCurrency={targetCurrency}
-      />
-      <ChartPlaceholder />
     </div>
   );
 }
