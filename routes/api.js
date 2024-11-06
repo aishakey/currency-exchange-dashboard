@@ -4,10 +4,15 @@ const { PrismaClient } = require("@prisma/client");
 const router = express.Router();
 const prisma = new PrismaClient();
 
-//Get the currencies
+//Get all currencies
 router.get("/currencies", async (req, res) => {
   try {
-    const currencies = await prisma.currency.findMany();
+    const currencies = await prisma.currency.findMany({
+      select: {
+        currency_code: true,
+        currency_name: true,
+      },
+    });
     res.json(currencies);
   } catch (error) {
     console.error("Error fetching currencies:", error);

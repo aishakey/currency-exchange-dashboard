@@ -4,45 +4,33 @@ require("dotenv").config();
 
 const prisma = new PrismaClient();
 
-const BASE_CURRENCY = "USD";
-
 async function fetchExchangeRates() {
   try {
     const response = await axios.get(
-      `https://v6.exchangerate-api.com/v6/${process.env.EXCHANGE_RATE_API_KEY}/latest/${BASE_CURRENCY}`
+      `https://v6.exchangerate-api.com/v6/${process.env.EXCHANGE_RATE_API_KEY}/latest/USD`
     );
     const data = response.data;
 
     if (data.result !== "success") {
       throw new Error("Failed to fetch exchange rates");
     }
+
     const { conversion_rates } = data;
 
-    const currencies = Object.keys(conversion_rates).map((code) => ({
-      currency_code: code,
-      currency_name: code, //Placeholder
-    }));
+    const exchangeRates = [];
 
-    await Promise.all(
-      currencies.map(async (currency) => {
-        await prisma.currency.upsert({
-          where: { currency_code: currency.currency_code },
-          update: {},
-          create: {
-            currency_code: currency.currency_code,
-            currency_name: currency.currency_name,
-          },
-        });
-      })
-    );
-
-    const exchangeRates = Object.entries(conversion_rates).map(
-      ([code, rate]) => ({
-        baseCurrencyCode: BASE_CURRENCY,
-        targetCurrencyCode: code,
-        rate: rate,
-      })
-    );
+    for (const [baseCode, baseRate] of Object.entries(conversion_rates)) {
+      for (const [targetCode, targetRate] of Object.entries(conversion_rates)) {
+        if (baseCode !== targetCode) {
+          const rate = targetRate / baseRate;
+          exchangeRates.push({
+            baseCurrencyCode: baseCode,
+            targetCurrencyCode: targetCode,
+            rate,
+          });
+        }
+      }
+    }
 
     await Promise.all(
       exchangeRates.map(
@@ -54,26 +42,28 @@ async function fetchExchangeRates() {
             where: { currency_code: targetCurrencyCode },
           });
 
-          await prisma.exchangeRate.upsert({
-            where: {
-              baseCurrencyId_targetCurrencyId: {
+          if (baseCurrency && targetCurrency) {
+            await prisma.exchangeRate.upsert({
+              where: {
+                baseCurrencyId_targetCurrencyId: {
+                  baseCurrencyId: baseCurrency.id,
+                  targetCurrencyId: targetCurrency.id,
+                },
+              },
+              update: { rate, rate_date: new Date() },
+              create: {
+                rate,
+                rate_date: new Date(),
                 baseCurrencyId: baseCurrency.id,
                 targetCurrencyId: targetCurrency.id,
               },
-            },
-            update: { rate: rate, rate_date: new Date() },
-            create: {
-              rate: rate,
-              rate_date: new Date(),
-              baseCurrencyId: baseCurrency.id,
-              targetCurrencyId: targetCurrency.id,
-            },
-          });
+            });
+          }
         }
       )
     );
 
-    console.log("Database updated with latest exchange rates.");
+    console.log("Database updated with all currency pair exchange rates.");
   } catch (error) {
     console.error("Error updating the database:", error.message);
   } finally {

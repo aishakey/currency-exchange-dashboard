@@ -4,10 +4,9 @@ import ExchangeRateDisplay from "./components/ExchangeRateDisplay";
 import ChartPlaceholder from "./components/ChartPlaceholder";
 
 function App() {
-  const [baseCurrency, setBaseCurrency] = useState("");
-  const [targetCurrency, setTargetCurrency] = useState("");
+  const [baseCurrency, setBaseCurrency] = useState("USD");
+  const [targetCurrency, setTargetCurrency] = useState("EUR");
 
-  // src/App.js
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
       <h1 className="text-4xl font-bold text-gray-800 mb-6">
