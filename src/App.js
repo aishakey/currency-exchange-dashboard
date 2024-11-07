@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import CurrencySelector from "./components/CurrencySelector";
 import ExchangeRateDisplay from "./components/ExchangeRateDisplay";
-import ChartPlaceholder from "./components/ChartPlaceholder";
 import CurrencyConverter from "./components/CurrencyConverter";
+import HistoricalChart from "./components/HistoricalChart";
 
 function App() {
   const [baseCurrency, setBaseCurrency] = useState("USD");
@@ -51,10 +51,10 @@ function App() {
         targetCurrency={targetCurrency}
       />
 
-      {/* Chart Placeholder */}
-      <div className="w-full max-w-2xl">
-        <ChartPlaceholder />
-      </div>
+      <HistoricalChart
+        baseCurrency={baseCurrency}
+        targetCurrency={targetCurrency}
+      />
     </div>
   );
 }
