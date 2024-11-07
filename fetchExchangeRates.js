@@ -39,7 +39,7 @@ async function fetchExchangeRates() {
             where: { currency_code: baseCurrencyCode },
           });
           const targetCurrency = await prisma.currency.findUnique({
-            where: { currency_code: targetCurrencyCode },
+            where: { currency_code: targetCode },
           });
 
           if (baseCurrency && targetCurrency) {
