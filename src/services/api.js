@@ -23,15 +23,3 @@ export const getExchangeRate = async (base, target) => {
     return null;
   }
 };
-
-export const getHistoricalExchangeRates = async (base, target) => {
-  try {
-    const response = await axios.get(`${API_URL}/historical-exchange-rate`, {
-      params: { base, target },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching historical exchange rates:", error);
-    return [];
-  }
-};
