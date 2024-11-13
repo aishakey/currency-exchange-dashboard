@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { getHistoricalExchangeRates } from "../services/api";
+import { getHistoricalExchangeRates } from "../services/historical";
 
 function HistoricalChart({ baseCurrency, targetCurrency }) {
   const [chartData, setChartData] = useState(null);
