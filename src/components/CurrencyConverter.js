@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getExchangeRate } from "../services/api";
+import { getExchangeRate } from "../services/api.js";
 
 function CurrencyConverter({ baseCurrency, targetCurrency }) {
   const [amount, setAmount] = useState(1);

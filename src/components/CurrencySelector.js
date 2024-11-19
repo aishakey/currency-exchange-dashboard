@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getCurrencies } from "../services/api";
+import { getCurrencies } from "../services/api.js";
 
 function CurrencySelector({ selectedCurrency, onCurrencyChange }) {
   const [currencies, setCurrencies] = useState([]);

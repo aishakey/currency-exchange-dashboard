@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import CurrencySelector from "./components/CurrencySelector";
-import ExchangeRateDisplay from "./components/ExchangeRateDisplay";
-import CurrencyConverter from "./components/CurrencyConverter";
-import HistoricalChart from "./components/HistoricalChart";
+import CurrencySelector from "./components/CurrencySelector.js";
+import ExchangeRateDisplay from "./components/ExchangeRateDisplay.js";
+import CurrencyConverter from "./components/CurrencyConverter.js";
+import HistoricalChart from "./components/HistoricalChart.js";
 
 function App() {
   const [baseCurrency, setBaseCurrency] = useState("USD");

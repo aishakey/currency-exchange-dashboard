@@ -1,5 +1,5 @@
-const cron = require("node-cron");
-const { exec } = require("child_process");
+import cron from "node-cron";
+import { exec } from "child_process";
 
 cron.schedule("0 0 * * 0", () => {
   console.log("Running weekly exchange rate update...");

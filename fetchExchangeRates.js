@@ -1,6 +1,8 @@
-const axios = require("axios");
-const { PrismaClient } = require("@prisma/client");
-require("dotenv").config();
+import axios from "axios";
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const prisma = new PrismaClient();
 

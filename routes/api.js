@@ -1,5 +1,5 @@
-const express = require("express");
-const { PrismaClient } = require("@prisma/client");
+import express from "express";
+import { PrismaClient } from "@prisma/client";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -43,4 +43,4 @@ router.get("/exchange-rate", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
