@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:5000/api";
-const EXTERNAL_API_URL = "https://api.exchangeratesapi.io/v1";
-const HISTORICAL_API_KEY = process.env.HISTORICAL_RATE_API;
+const EXTERNAL_API_URL = "https://api.exchangerate.host";
 
 export const getCurrencies = async () => {
   try {
@@ -32,23 +31,22 @@ export const getYearlyExchangeRates = async (base, target) => {
     const currentYear = new Date().getFullYear();
 
     const yearlyData = [];
+    const apiKey = process.env.EXCHANGE_RATE_HOST_API_KEY;
 
     console.log(`Fetching yearly data for ${base} to ${target}...`);
 
     for (let year = startYear; year <= currentYear; year++) {
-      const formattedDate = `${year}-01-01`; // First day of each year
+      const formattedDate = `${year}-01-01`;
       const url = `${EXTERNAL_API_URL}/${formattedDate}`;
 
-      // Fetch data for the specific year
       const response = await axios.get(url, {
         params: {
-          access_key: HISTORICAL_API_KEY, // Use the historical API key
           base: base,
           symbols: target,
+          api_key: apiKey,
         },
       });
 
-      // Check and process response
       if (response.data && response.data.rates && response.data.rates[target]) {
         yearlyData.push({
           date: formattedDate,
@@ -62,7 +60,10 @@ export const getYearlyExchangeRates = async (base, target) => {
     console.log("Yearly data fetched successfully:", yearlyData);
     return yearlyData;
   } catch (error) {
-    console.error("Error fetching yearly exchange rates from API:", error);
-    return null; // Return null if an error occurs
+    console.error(
+      "Error fetching yearly exchange rates from API:",
+      error.message
+    );
+    return null;
   }
 };
