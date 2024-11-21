@@ -1,10 +1,10 @@
 import axios from "axios";
-import { PrismaClient } from "@prisma/client";
+
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const prisma = new PrismaClient();
+const prisma = prisma;
 
 async function fetchExchangeRates() {
   try {
