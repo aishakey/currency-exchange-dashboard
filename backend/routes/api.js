@@ -1,7 +1,7 @@
 import express from "express";
+import prisma from "../utils/prismaClient.js";
 
 const router = express.Router();
-const prisma = prisma;
 
 //Get all currencies
 router.get("/currencies", async (req, res) => {
