@@ -44,7 +44,7 @@ router.get("/exchange-rate", async (req, res) => {
 
 //Fetch exchange rates for a base currency
 router.get("/comparison-table", async (req, res) => {
-  const { base, limit = 10, offset = 0, search } = req.query;
+  const { base, limit = 5, offset = 0, search } = req.query;
 
   try {
     const baseCurrency = await prisma.currency.findUnique({
@@ -81,6 +81,61 @@ router.get("/comparison-table", async (req, res) => {
   } catch (error) {
     console.error("Error fetching comparison table:", error.message);
     res.status(500).json({ error: "Error fetching comparison table" });
+  }
+});
+
+//Fetch trending currencies
+router.get("/trending-currencies", async (req, res) => {
+  const { base, period = "24h", limit = 3 } = req.query;
+
+  try {
+    const baseCurrency = await prisma.currency.findUnique({
+      where: { currency_code: base },
+    });
+
+    if (!baseCurrency) {
+      return res.status(404).json({ error: "Base currency not found" });
+    }
+
+    const currentRates = await prisma.exchangeRate.findMany({
+      where: { baseCurrencyId: baseCurrency.id },
+      include: { targetCurrency: true },
+    });
+
+    const pastRates = await prisma.exchangeRate.findMany({
+      where: {
+        baseCurrencyId: baseCurrency.id,
+        rate_date: { lt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      },
+      include: { targetCurrency: true },
+    });
+
+    const pastRateMap = pastRates.reduce((map, rate) => {
+      map[rate.targetCurrency.currency_code] = rate.rate;
+      return map;
+    }, {});
+
+    const trending = currentRates
+      .map((currentRate) => {
+        const pastRate = pastRateMap[currentRate.targetCurrency.currency_code];
+        if (!pastRate) return null;
+
+        const change = ((currentRate.rate - pastRate) / pastRate) * 100;
+        return {
+          currency: currentRate.targetCurrency.currency_code,
+          name: currentRate.targetCurrency.currency_name,
+          rate: currentRate.rate,
+          change: change.toFixed(2),
+        };
+      })
+      .filter(Boolean);
+
+    trending.sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
+
+    res.json(trending.slice(0, parseInt(limit)));
+  } catch (error) {
+    console.error("Error fetching trending currencies:", error.message);
+    res.status(500).json({ error: "Error fetching trending currencies" });
   }
 });
 

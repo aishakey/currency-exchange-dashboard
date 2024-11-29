@@ -4,6 +4,7 @@ import ExchangeRateDisplay from "./components/ExchangeRateDisplay.js";
 import CurrencyConverter from "./components/CurrencyConverter.js";
 import HistoricalChart from "./components/HistoricalChart.js";
 import CurrencyComparisonTable from "./components/CurrencyComparisonTable.js";
+import TrendingCurrencies from "./components/TrendingCurrencies.js";
 
 function App() {
   const [baseCurrency, setBaseCurrency] = useState("USD");
@@ -51,6 +52,8 @@ function App() {
         baseCurrency={baseCurrency}
         targetCurrency={targetCurrency}
       />
+
+      <TrendingCurrencies baseCurrency={baseCurrency} />
 
       <CurrencyComparisonTable baseCurrency={baseCurrency} />
 

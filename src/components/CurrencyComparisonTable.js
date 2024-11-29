@@ -4,7 +4,7 @@ import { getComparisonTable } from "../services/api.js";
 function CurrencyComparisonTable({ baseCurrency }) {
   const [rates, setRates] = useState([]);
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
 
   useEffect(() => {
     const fetchData = async () => {

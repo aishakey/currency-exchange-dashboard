@@ -26,7 +26,7 @@ export const getExchangeRate = async (base, target) => {
 
 export const getComparisonTable = async (
   base,
-  limit = 10,
+  limit = 5,
   offset = 0,
   search = ""
 ) => {
@@ -37,6 +37,18 @@ export const getComparisonTable = async (
     return response.data;
   } catch (error) {
     console.error("Error fetching comparison table:", error);
+    return [];
+  }
+};
+
+export const getTrendingCurrencies = async (base, period = "24h") => {
+  try {
+    const response = await axios.get(`${API_URL}/trending-currencies`, {
+      params: { base, period },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching trending currencies:", error);
     return [];
   }
 };
