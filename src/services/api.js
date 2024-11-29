@@ -23,3 +23,20 @@ export const getExchangeRate = async (base, target) => {
     return null;
   }
 };
+
+export const getComparisonTable = async (
+  base,
+  limit = 10,
+  offset = 0,
+  search = ""
+) => {
+  try {
+    const response = await axios.get(`${API_URL}/comparison-table`, {
+      params: { base, limit, offset, search },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching comparison table:", error);
+    return [];
+  }
+};
