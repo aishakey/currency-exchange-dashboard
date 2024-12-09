@@ -1,4 +1,5 @@
 import express from "express";
+import { getCachedNews } from "../utils/newsfetcher.js";
 import prisma from "../utils/prismaClient.js";
 
 const router = express.Router();
@@ -220,6 +221,18 @@ router.get("/market-overview", async (req, res) => {
     console.error("Error fetching market overview:", error.message);
     res.status(500).json({ error: "Internal server error." });
   }
+});
+
+router.get("/currency-news", (req, res) => {
+  const { lastUpdated, news } = getCachedNews();
+
+  if (!news.length) {
+    return res.status(503).json({
+      error: "Currency news is not yet available. Please try again later.",
+    });
+  }
+
+  res.json({ lastUpdated, news });
 });
 
 export default router;
