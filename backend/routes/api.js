@@ -139,4 +139,77 @@ router.get("/trending-currencies", async (req, res) => {
   }
 });
 
+//MArket overview
+router.get("/market-overview", async (req, res) => {
+  const { base = "USD" } = req.query;
+
+  try {
+    const baseCurrency = await prisma.currency.findUnique({
+      where: { currency_code: base },
+    });
+    console.log("Base Currency:", baseCurrency);
+
+    if (!baseCurrency) {
+      return res.status(404).json({ error: "Base currency not found" });
+    }
+
+    const currentRates = await prisma.exchangeRate.findMany({
+      where: { baseCurrencyId: baseCurrency.id },
+    });
+
+    const pastRates = await prisma.exchangeRate.findMany({
+      where: {
+        baseCurrencyId: baseCurrency.id,
+        rate_date: { lt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      },
+    });
+
+    const pastRateMap = pastRates.reduce((map, rate) => {
+      map[rate.targetCurrencyId] = rate.rate;
+      return map;
+    }, {});
+
+    let totalCurrencies = 0;
+    let mostVolatile = { currency: null, change: 0 };
+    let mostStable = { currency: null, change: Infinity };
+    let totalChange = 0;
+
+    for (const currentRate of currentRates) {
+      const pastRate = pastRateMap[currentRate.targetCurrencyId];
+      if (!pastRate) continue;
+
+      totalCurrencies++;
+
+      const change = Math.abs(((currentRate.rate - pastRate) / pastRate) * 100);
+      totalChange += change;
+
+      if (change > mostVolatile.change) {
+        mostVolatile = {
+          currency: currentRate.targetCurrency.currency_code,
+          change: change.toFixed(2),
+        };
+      }
+
+      if (change < mostStable.change) {
+        mostStable = {
+          currency: currentRate.targetCurrency.currency_code,
+          change: change.toFixed(2),
+        };
+      }
+    }
+
+    const averageChange = (totalChange / totalCurrencies).toFixed(2);
+
+    res.json({
+      totalCurrencies,
+      mostVolatile,
+      mostStable,
+      averageChange,
+    });
+  } catch (error) {
+    console.error("Error fetching market overview:", error.message);
+    res.status(500).json({ error: "Error fetching market overview" });
+  }
+});
+
 export default router;

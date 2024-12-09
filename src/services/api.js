@@ -52,3 +52,15 @@ export const getTrendingCurrencies = async (base, period = "24h") => {
     return [];
   }
 };
+
+export const getMarketOverview = async (base) => {
+  try {
+    const response = await axios.get(`${API_URL}/market-overview`, {
+      params: { base },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching market overview:", error);
+    return null;
+  }
+};
