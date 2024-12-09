@@ -139,7 +139,7 @@ router.get("/trending-currencies", async (req, res) => {
   }
 });
 
-//MArket overview
+//Market overview
 router.get("/market-overview", async (req, res) => {
   const { base = "USD" } = req.query;
 
@@ -147,22 +147,32 @@ router.get("/market-overview", async (req, res) => {
     const baseCurrency = await prisma.currency.findUnique({
       where: { currency_code: base },
     });
-    console.log("Base Currency:", baseCurrency);
 
     if (!baseCurrency) {
-      return res.status(404).json({ error: "Base currency not found" });
+      return res
+        .status(404)
+        .json({ error: `Base currency ${base} not found.` });
     }
+
+    console.log("Base Currency Query Result:", baseCurrency);
 
     const currentRates = await prisma.exchangeRate.findMany({
       where: { baseCurrencyId: baseCurrency.id },
+      include: { targetCurrency: true },
     });
 
     const pastRates = await prisma.exchangeRate.findMany({
       where: {
         baseCurrencyId: baseCurrency.id,
-        rate_date: { lt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+        rate_date: { lt: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // 24 hours ago
       },
+      include: { targetCurrency: true },
     });
+
+    if (!pastRates || pastRates.length === 0) {
+      console.warn("No past rates found for the given date.");
+      return res.status(404).json({ error: "No historical data available." });
+    }
 
     const pastRateMap = pastRates.reduce((map, rate) => {
       map[rate.targetCurrencyId] = rate.rate;
@@ -174,9 +184,9 @@ router.get("/market-overview", async (req, res) => {
     let mostStable = { currency: null, change: Infinity };
     let totalChange = 0;
 
-    for (const currentRate of currentRates) {
+    currentRates.forEach((currentRate) => {
       const pastRate = pastRateMap[currentRate.targetCurrencyId];
-      if (!pastRate) continue;
+      if (!pastRate) return;
 
       totalCurrencies++;
 
@@ -196,7 +206,7 @@ router.get("/market-overview", async (req, res) => {
           change: change.toFixed(2),
         };
       }
-    }
+    });
 
     const averageChange = (totalChange / totalCurrencies).toFixed(2);
 
@@ -208,7 +218,7 @@ router.get("/market-overview", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching market overview:", error.message);
-    res.status(500).json({ error: "Error fetching market overview" });
+    res.status(500).json({ error: "Internal server error." });
   }
 });
 
