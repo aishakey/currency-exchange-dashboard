@@ -64,3 +64,13 @@ export const getMarketOverview = async (base) => {
     return null;
   }
 };
+
+export const getCurrencyNews = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/currency-news`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching currency news:", error.message);
+    throw error;
+  }
+};

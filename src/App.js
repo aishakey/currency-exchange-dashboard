@@ -6,6 +6,7 @@ import HistoricalChart from "./components/HistoricalChart.js";
 import CurrencyComparisonTable from "./components/CurrencyComparisonTable.js";
 import TrendingCurrencies from "./components/TrendingCurrencies.js";
 import MarketOverview from "./components/MarketOverview.js";
+import CurrencyNews from "./components/CurrencyNews.js";
 
 function App() {
   const [baseCurrency, setBaseCurrency] = useState("USD");
@@ -53,6 +54,8 @@ function App() {
         baseCurrency={baseCurrency}
         targetCurrency={targetCurrency}
       />
+
+      <CurrencyNews />
 
       <MarketOverview baseCurrency={baseCurrency} />
 
